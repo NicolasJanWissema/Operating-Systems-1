@@ -1,5 +1,5 @@
 import java.io.*;
-import java.util.Scanner;
+
 //operating systems memory management code. Don't know what im doing yet.
 public class OS1Assignment {
     public static void main(String[] args){
@@ -12,12 +12,21 @@ public class OS1Assignment {
         else{
             System.out.println("input filename: " +args[0]);
             //Read file.
-            try{
-                BufferedReader br=new BufferedReader(new FileReader(args[0]));
-                int r;
-                while((r=br.read())!=-1)
+            try(
+                    FileInputStream inputStream = new FileInputStream(args[0]);
+                    //OutputStream outputStream = new FileOutputStream(outputFile);
+                    )
+            {
+                byte[] buffer = new byte[Byte.SIZE];
+                inputStream.read(buffer);
+                System.out.print(buffer);
+                while((inputStream.read(buffer))!=-1)
                 {
-                    System.out.print((char)r);
+                    for (int i=0;i< buffer.length;i++){
+                        System.out.print(buffer[i]& 0xFF);
+                        //System.out.print(toBitString(buffer[i]));
+                    }
+                    System.out.println();
                 }
                 System.out.println();
             }
@@ -27,5 +36,18 @@ public class OS1Assignment {
             }
         }
         System.out.println("Program completed.");
+    }
+    public String toBits(final byte val) {
+        final StringBuilder result = new StringBuilder();
+
+        for (int i=0; i<8; i++) {
+            result.append((int)(val >> (8-(i+1)) & 0x0001));
+        }
+
+        return result.toString();
+    }
+    public static String toBitString(final byte val) {
+        return String.format("%8s", Integer.toBinaryString(val & 0xFF))
+                .replace(' ', '0');
     }
 }
