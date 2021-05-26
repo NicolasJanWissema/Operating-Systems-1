@@ -2,7 +2,11 @@ import java.io.*;
 
 //operating systems memory management code. Don't know what im doing yet.
 public class OS1Assignment {
+    //Page table used. can be changed.
+    static final long[] PageTable= new long[]{2,4,1,7,3,5,6};
+
     public static void main(String[] args){
+
         //Check input argument.
         if(args.length!=1){
             System.out.println("Argument syntax error. program takes one input parameter <input sequence filename>.");
@@ -14,18 +18,33 @@ public class OS1Assignment {
             //Read file.
             try(
                     FileInputStream inputStream = new FileInputStream(args[0]);
-                    //OutputStream outputStream = new FileOutputStream(outputFile);
                     )
             {
+
                 byte[] buffer = new byte[Byte.SIZE];
-                inputStream.read(buffer);
-                System.out.print(buffer);
+                Long.toHexString(Long.parseLong(Long.toBinaryString(2),2));
                 while((inputStream.read(buffer))!=-1)
                 {
-                    for (int i=0;i< buffer.length;i++){
-                        System.out.print(buffer[i]& 0xFF);
-                        //System.out.print(toBitString(buffer[i]));
+                    long value = 0;
+                    for (int i = 0; i < buffer.length; i++)
+                    {
+                        value += ((long) buffer[i] & 0xFF) << (8 * i);
                     }
+                    System.out.println(Long.toHexString(value)+":");
+                    String binaryStringValue = Long.toBinaryString(value);
+                    binaryStringValue = OS1Assignment.fullBinary(binaryStringValue,12);
+
+
+                    System.out.println(binaryStringValue);
+                    System.out.println(binaryStringValue.substring(0,4));
+                    if(binaryStringValue.substring(0,5).compareTo("00000")==0){
+                        binaryStringValue = "00010"+binaryStringValue.substring(5,binaryStringValue.length());
+                    }
+                    if(binaryStringValue.substring(0,5).compareTo("00100")==0){
+                        binaryStringValue = "00011"+binaryStringValue.substring(5,binaryStringValue.length());
+                    }
+                    System.out.println(binaryStringValue);
+                    System.out.println(Long.toHexString(Long.parseLong(binaryStringValue,2)));
                     System.out.println();
                 }
                 System.out.println();
@@ -37,17 +56,11 @@ public class OS1Assignment {
         }
         System.out.println("Program completed.");
     }
-    public String toBits(final byte val) {
-        final StringBuilder result = new StringBuilder();
-
-        for (int i=0; i<8; i++) {
-            result.append((int)(val >> (8-(i+1)) & 0x0001));
+    private static String fullBinary(String binaryInput,int length){
+        int check =length-binaryInput.length();
+        for(int i=0; i<check;i++){
+            binaryInput = "0"+binaryInput;
         }
-
-        return result.toString();
-    }
-    public static String toBitString(final byte val) {
-        return String.format("%8s", Integer.toBinaryString(val & 0xFF))
-                .replace(' ', '0');
+        return(binaryInput);
     }
 }
